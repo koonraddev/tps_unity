@@ -6,14 +6,24 @@ public class player_movement : MonoBehaviour
 {
     private Rigidbody rb;
     public float movementSpeed;
+    public float fallingForce;
     public float jumpForce;
-    public float speed = 2f;
     private Transform[] lanes = new Transform[3];
     private int activeLane;
     public Transform lane0;
     public Transform lane1;
     public Transform lane2;
 
+    public bool backCamera;
+    public bool playerOnGround;
+    public bool playerFalling;
+    public bool playerJumping;
+
+    private GameObject groundVariable;
+    private GameObject[] objects;
+
+    private float stepPlayer;
+    private Vector3 newPosition;
     void Start()
     {
         activeLane = 1;
@@ -21,52 +31,161 @@ public class player_movement : MonoBehaviour
         lanes[0] = lane0;
         lanes[1] = lane1;
         lanes[2] = lane2;
+        backCamera = true;
+        groundVariable = (GameObject)Resources.Load("Cube", typeof(GameObject));
+        stepPlayer = movementSpeed * Time.deltaTime;
+        newPosition = new Vector3(lanes[activeLane].position.x, lanes[activeLane].position.y, 0f);
+        MovePlayer();
     }
-
-    // Update is called once per frame
     void Update()
     {
-        /*
-        var movementHor = Input.GetAxis("Horizontal");
+        newPosition = new Vector3(lanes[activeLane].position.x, lanes[activeLane].position.y, 0f);
 
-        rb.velocity = new Vector3(movementHor * movementSpeed, rb.velocity.y, 0);
-        */
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        UpdatePlayerMovementStatus();
+        
+        if (playerOnGround) // player on ground
         {
-            //gameObject.transform.position += new Vector3(-2.5f, 0f);
-            if (activeLane != 0)
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                activeLane -= 1;
+                if (backCamera)
+                {
+                    if (activeLane != 0)
+                    {
+                        activeLane -= 1;
+                    }
+                }
+                else
+                {
+                    if (activeLane + 1 != lanes.Length)
+                    {
+                        activeLane += 1;
+                    }
+                }
+
+            }
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                if (backCamera)
+                {
+                    if (activeLane + 1 != lanes.Length)
+                    {
+                        activeLane += 1;
+                    }
+                }
+                else
+                {
+                    if (activeLane != 0)
+                    {
+                        activeLane -= 1;
+                    }
+                }
+
+            }
+
+            if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                stepPlayer = 0;
+                
+            }
+
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                Jump();
             }
         }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            //gameObject.transform.position += new Vector3(2.5f, 0f);
-            //gameObject.GetComponent<Rigidbody>().AddForce(new Vector3(20f, 0f));
-            //transform.position += new Vector3(2.5f, 0f, 0f) * Time.deltaTime;
-            //GetComponent<Rigidbody>().velocity = new Vector2(0, floatingVelocity);
-            //transform.position + new Vector3(2.5f, 0f, 0f)
 
-            if (activeLane + 1 != lanes.Length)
+        if (playerFalling) //player falling 
+        {
+            transform.position += new Vector3(0, -1, 0) * Mathf.Abs(rb.velocity.y) * Time.deltaTime * fallingForce;
+        }
+
+        if (!playerOnGround) //player is not on ground
+        {
+            if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                activeLane += 1;
+                stepPlayer = 0;
             }
         }
 
-        var step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, lanes[activeLane].position , step);
-    
-        if (Input.GetButtonDown("Jump"))
+        if (stepPlayer < 1)
         {
-            Jump();
+            MovePlayer();
+            if (transform.position.x == lanes[activeLane].position.x)
+            {
+                stepPlayer += 1;
+            }
+            Debug.Log("Moooooving" + stepPlayer);
         }
 
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            groundVariable.GetComponent<Ground_Script>().SpeedUp();
+            
+            objects = GameObject.FindGameObjectsWithTag("Plane");
+            foreach (GameObject oneObject in objects)
+            {
+                oneObject.GetComponent<Ground_Script>().SpeedUp();
+            }
+        }
+        else
+        {
+            groundVariable.GetComponent<Ground_Script>().SpeedDown();
+            objects = GameObject.FindGameObjectsWithTag("Plane");
+            foreach (GameObject oneObject in objects)
+            {
+                oneObject.GetComponent<Ground_Script>().SpeedDown();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            backCamera = !backCamera;  
+        }   
+
+    }
+
+    public void UpdatePlayerMovementStatus()
+    {
+        if (rb.velocity.y == 0)
+        {
+            playerOnGround = true;
+        }
+        else
+        {
+            playerOnGround = false;
+            if (rb.velocity.y < 0)
+            {
+                playerFalling = true;
+                playerJumping = false;
+            }
+            else
+            {
+                playerFalling = false;
+                playerJumping = true;
+            }
+        }
     }
 
     public void Jump()
     {
-        //rb.velocity = Vector2.up * silaSkoku;
-        rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
+        if (stepPlayer > 1)
+        {
+            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        }
+
     }
+
+    public void MovePlayer()
+    {
+        stepPlayer += Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, newPosition, movementSpeed * stepPlayer);
+    }
+
+    public int GetActiveLane()
+    {
+        return activeLane;
+    }
+
+    
 }

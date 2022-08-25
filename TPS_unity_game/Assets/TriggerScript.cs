@@ -5,8 +5,6 @@ using UnityEngine;
 public class TriggerScript : MonoBehaviour
 {
     public GameObject groundPrefab;
-    private float positonZ;
-    private float addPositionZ;
 
     private void OnTriggerExit(Collider exitInfo)
     {
@@ -20,8 +18,14 @@ public class TriggerScript : MonoBehaviour
 
     private void RenderGround()
     {
-        positonZ = groundPrefab.GetComponent<BoxCollider>().size.z / 2;
-        Vector3 pos1 = gameObject.transform.position + (new Vector3(0f, 0f, positonZ));
+        Vector3 pos1 = gameObject.transform.position + (new Vector3(0f, 0f, groundPrefab.transform.localScale.z / 2));
         Instantiate(groundPrefab, pos1, Quaternion.identity);
+        /*
+        Debug.Log("game:" + gameObject.transform.position);
+        Debug.Log("ground: " + groundPrefab.transform.position);
+        Debug.Log("Time: " + Time.deltaTime);
+        Debug.Log(pos1);
+        */
+
     }
 }
