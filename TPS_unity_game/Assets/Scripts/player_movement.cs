@@ -8,31 +8,38 @@ public class player_movement : MonoBehaviour
     public float movementSpeed;
     public float fallingForce;
     public float jumpForce;
-    private Transform[] lanes = new Transform[3];
+    private Transform[] lanes = new Transform[5];
     private int activeLane;
     public Transform lane0;
     public Transform lane1;
     public Transform lane2;
+    public Transform lane3;
+    public Transform lane4;
 
     public bool backCamera;
     public bool playerOnGround;
     public bool playerFalling;
     public bool playerJumping;
 
-    private GameObject groundVariable;
-    private GameObject[] objects;
-
     private float stepPlayer;
     private Vector3 newPosition;
+
+    public float szybkoscRuchu;
+
+    public float movementHor2 = 0;
+
+    public float PX;
+    public float CX;
     void Start()
     {
-        activeLane = 1;
+        activeLane = 2;
         rb = GetComponent<Rigidbody>();
         lanes[0] = lane0;
         lanes[1] = lane1;
         lanes[2] = lane2;
+        lanes[3] = lane3;
+        lanes[4] = lane4;
         backCamera = true;
-        groundVariable = (GameObject)Resources.Load("Cube", typeof(GameObject));
         stepPlayer = movementSpeed * Time.deltaTime;
         newPosition = new Vector3(lanes[activeLane].position.x, lanes[activeLane].position.y, 0f);
         MovePlayer();
@@ -52,6 +59,7 @@ public class player_movement : MonoBehaviour
                     if (activeLane != 0)
                     {
                         activeLane -= 1;
+                        movementHor2 = -1;
                     }
                 }
                 else
@@ -88,7 +96,7 @@ public class player_movement : MonoBehaviour
                 
             }
 
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetButtonDown("Jump"))
             {
                 Jump();
             }
@@ -103,40 +111,41 @@ public class player_movement : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                stepPlayer = 0;
+                stepPlayer = 0; // doesnt work
             }
         }
 
+        /*
         if (stepPlayer < 1)
         {
-            MovePlayer();
+            //MovePlayer();
             if (transform.position.x == lanes[activeLane].position.x)
             {
                 stepPlayer += 1;
             }
-            Debug.Log("Moooooving" + stepPlayer);
         }
+        */
+        //jakis syf
+        //transform.position = Vector3.Lerp(transform.position, new Vector3(player.transform.position.x + offsetX, currentOffset, player.transform.position.z + offsetZ), speedMove * Time.deltaTime
+
+        //var movementHor = Input.GetAxis("Horizontal");
+        //transform.position += new Vector3(movementHor, 0, 0) * Time.deltaTime * szybkoscRuchu;
 
 
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (transform.position.x != lanes[activeLane].position.x)
         {
-            groundVariable.GetComponent<Ground_Script>().SpeedUp();
-            
-            objects = GameObject.FindGameObjectsWithTag("Plane");
-            foreach (GameObject oneObject in objects)
-            {
-                oneObject.GetComponent<Ground_Script>().SpeedUp();
-            }
+            transform.position += new Vector3(movementHor2, 0, 0) * Time.deltaTime * szybkoscRuchu;
         }
         else
         {
-            groundVariable.GetComponent<Ground_Script>().SpeedDown();
-            objects = GameObject.FindGameObjectsWithTag("Plane");
-            foreach (GameObject oneObject in objects)
-            {
-                oneObject.GetComponent<Ground_Script>().SpeedDown();
-            }
+            movementHor2 = 0;
         }
+
+        PX = transform.position.x;
+        CX = lanes[activeLane].position.x;
+
+
+
 
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -145,11 +154,13 @@ public class player_movement : MonoBehaviour
 
     }
 
+
     public void UpdatePlayerMovementStatus()
     {
         if (rb.velocity.y == 0)
         {
             playerOnGround = true;
+            playerFalling = false;
         }
         else
         {
@@ -173,6 +184,7 @@ public class player_movement : MonoBehaviour
         {
             rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         }
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
 
     }
 
