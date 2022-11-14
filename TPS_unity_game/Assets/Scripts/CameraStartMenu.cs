@@ -73,7 +73,7 @@ public class CameraStartMenu : MonoBehaviour
                     mainCamera.transform.position = new Vector3(menuCameraPlaces[activeCamera].position.x + xMenu, menuCameraPlaces[activeCamera].position.y + yMenu, menuCameraPlaces[activeCamera].position.z);
                 }
                 mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, menuCameraPlaces[activeCamera].position, step * 10);
-                mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, menuCameraPlaces[activeCamera].localRotation, step);
+                mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, menuCameraPlaces[activeCamera].localRotation, step * 2);
             }
         }
     }
@@ -101,6 +101,5 @@ public class CameraStartMenu : MonoBehaviour
     public void RunChangeStatus()
     {
         runOFF = !runOFF;
-
     }
 }

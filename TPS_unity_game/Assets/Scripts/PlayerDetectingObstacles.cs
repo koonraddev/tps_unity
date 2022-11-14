@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class PlayerDetectingObstacles : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider enterInfo)
+    CharacterController ctr;
+
+
+    private void Update()
     {
-        if (enterInfo.tag == "Obstacle")
-        {
-            Destroy(enterInfo.gameObject);
-        }
+       // Debug.Log(ctr.detectCollisions.ToString());
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        //Debug.Log(other.name);
+        //Debug.Log(other.gameObject.name);
+
     }
 }

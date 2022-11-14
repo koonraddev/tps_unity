@@ -33,6 +33,11 @@ public class PlayerMovement : MonoBehaviour
     private float stepPlayer;
     private Vector3 newPosition = Vector3.zero;
 
+    public bool runON;
+
+    public Camera mainCamera;
+    private CameraMovement camMov;
+
     void Start()
     {
         activeLane = 2;
@@ -42,45 +47,54 @@ public class PlayerMovement : MonoBehaviour
         lanes[3] = lane3;
         lanes[4] = lane4;
         stepPlayer = movementSpeed * Time.deltaTime;
+        runON = false;
+        camMov = mainCamera.GetComponent<CameraMovement>();
+        backCamera = camMov.backCamera;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        backCamera = camMov.backCamera;
+        if (runON)
         {
-            if (backCamera)
+            if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                activeLane -= 1;
+                camMov.MultiplierActiveLane();
+                if (backCamera)
+                {
+                    activeLane += 1;
+                }
+                else
+                {
+                    activeLane -= 1;
+                }
+
             }
-            else
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                activeLane += 1;
+                camMov.MultiplierActiveLane();
+                if (backCamera)
+                {
+                    activeLane -= 1;
+                }
+                else
+                {
+                    activeLane += 1;
+                }
+
             }
 
+            movHorizontal = Input.GetAxisRaw("Horizontal");
+            activeLane = Mathf.Clamp(activeLane, 0, 4);
         }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if (backCamera)
-            {
-                activeLane += 1;
-            }
-            else
-            {
-                activeLane -= 1;
-            }
-
-        }
-        activeLane = Mathf.Clamp(activeLane, 0, 4);
-
-
-        movHorizontal = Input.GetAxisRaw("Horizontal");
+            
         movVect = new Vector3(movHorizontal, 0f, 0f);
 
         if (ctr.isGrounded)
         {
             movementSpeed = movementSpeedOnGround;
             verticalVelocity = -0.1f;
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetKeyDown(KeyCode.UpArrow) && runON)
             {
                 verticalVelocity = jumpForce;
             }
@@ -95,12 +109,23 @@ public class PlayerMovement : MonoBehaviour
             }
         }       
         newPosition.x = lanes[activeLane].transform.position.x;
+        newPosition.z = lanes[activeLane].transform.position.z;
 
         Vector3 moveVector = Vector3.zero;
         moveVector.x = (newPosition - transform.position).normalized.x * movementSpeed;
         moveVector.y = verticalVelocity;
-        moveVector.z = 0f;
+        if (transform.position.z != lanes[activeLane].transform.position.z)
+        {
+            moveVector.z = (newPosition - transform.position).normalized.z * movementSpeed;
+        }
+        else
+        {
+            moveVector.z = 0f;
+        }
+
         ctr.Move(moveVector * Time.deltaTime);
+
+        
     }
 
     public void Jump()
@@ -115,5 +140,9 @@ public class PlayerMovement : MonoBehaviour
     public float GetMovementSpeed()
     {
         return movementSpeed;
+    }
+    public void RunChangeStatus()
+    {
+        runON = !runON;
     }
 }

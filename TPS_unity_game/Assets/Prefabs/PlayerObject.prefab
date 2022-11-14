@@ -142,10 +142,10 @@ MonoBehaviour:
   lane3: {fileID: 0}
   lane4: {fileID: 0}
   backCamera: 0
-  movementSpeedOnGround: 40
-  movementSpeedInAir: 20
-  jumpForce: 13
-  gravity: 20
+  movementSpeedOnGround: 30
+  movementSpeedInAir: 55
+  jumpForce: 18
+  gravity: 35
   verticalVelocity: 0
 --- !u!143 &5198276546920483560
 CharacterController:
@@ -189,7 +189,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.2, y: 1.8, z: 0.1}
-  m_Center: {x: 0, y: 0.9, z: 0.4}
+  m_Center: {x: 0, y: 1.4, z: 0.6}
 --- !u!114 &828680484871076999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2c8b0f60ed93b540999c8905e782a0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficulty: 10
+  difficulty: 1
 --- !u!1 &5198276547638725769
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,32 +341,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 320b1c2af77554f99a1658df4a6d3d5c, type: 3}
   m_PrefabInstance: {fileID: 5198276545777108044}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &5198276547075879602
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4251980705200168261}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 0.2, y: 1.8, z: 0.1}
-  m_Center: {x: 0, y: 0.9, z: 0.1}
---- !u!65 &5198276547075879606
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4251980705200168261}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 0.19999999, y: 0.19999999, z: 0.2}
-  m_Center: {x: 0, y: 0.1, z: -0.1}
 --- !u!212 &5198276547075879610
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -439,34 +413,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &5198276547075879611
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4251980705200168261}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d9c88e691fc5fb43935a8cd262a9010, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movementSpeed: 2
-  fallingForce: 2
-  jumpForce: 15
-  lane0: {fileID: 0}
-  lane1: {fileID: 0}
-  lane2: {fileID: 0}
-  lane3: {fileID: 0}
-  lane4: {fileID: 0}
-  backCamera: 0
-  playerOnGround: 0
-  playerFalling: 0
-  playerJumping: 0
-  szybkoscRuchu: 10
-  movementHor2: 0
-  PX: 0
-  CX: 0
 --- !u!4 &6886749126877329387 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1707243787577406375, guid: 320b1c2af77554f99a1658df4a6d3d5c, type: 3}

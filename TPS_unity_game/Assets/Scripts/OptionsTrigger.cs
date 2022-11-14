@@ -4,11 +4,25 @@ using UnityEngine;
 
 public class OptionsTrigger : MonoBehaviour
 {
-    public GameObject cam;
+    public Camera cam;
     private CameraStartMenu camCtr;
+    public GameObject optionsMenu;
+    public Transform optionsCameraPlace;
     void Start()
     {
         camCtr = cam.GetComponent<CameraStartMenu>();
+    }
+
+    void Update()
+    {
+        if (cam.transform.position == optionsCameraPlace.position)
+        {
+            optionsMenu.SetActive(true);
+        }
+        else
+        {
+            optionsMenu.SetActive(false);
+        }
     }
 
     public void OnMouseDown()

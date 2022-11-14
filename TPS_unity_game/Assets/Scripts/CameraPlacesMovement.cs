@@ -7,6 +7,9 @@ public class CameraPlacesMovement : MonoBehaviour
     private int activeLane;
     public bool backCamera;
 
+    public Camera mainCamera;
+    private CameraMovement camMov;
+
     private Transform[] lanes = new Transform[5];
     public Transform lane0;
     public Transform lane1;
@@ -22,9 +25,10 @@ public class CameraPlacesMovement : MonoBehaviour
     private PlayerMovement playerMov;
     void Start()
     {
+        camMov = mainCamera.GetComponent<CameraMovement>();
         playerMov = playerObject.GetComponent<PlayerMovement>();
         activeLane = 1;
-        backCamera = true;
+        backCamera = camMov.backCamera;
         lanes[0] = lane0;
         lanes[1] = lane1;
         lanes[2] = lane2;
@@ -37,28 +41,28 @@ public class CameraPlacesMovement : MonoBehaviour
     {
         stepPlayer = movementSpeed * Time.deltaTime;
 
+        backCamera = camMov.backCamera;
         activeLane = playerMov.GetActiveLane();
 
         if (activeLane == 0)
         {
-            offsetCamera = new Vector3(lanes[activeLane].position.x + 3.50f, transform.position.y, transform.position.z);
+            camMov.offset = -3.50f;
         }
         if (activeLane == 1)
         {
-            offsetCamera = new Vector3(lanes[activeLane].position.x + 1.75f, transform.position.y, transform.position.z);
+            camMov.offset = -1.75f;
         }
         if (activeLane == 2)
         {
-            offsetCamera = new Vector3(lanes[activeLane].position.x, transform.position.y, transform.position.z);
+            camMov.offset = 0f;
         }
         if (activeLane == 3)
         {
-            offsetCamera = new Vector3(lanes[activeLane].position.x - 1.75f, transform.position.y, transform.position.z);
+           camMov.offset = 1.75f;
         }
         if (activeLane == 4)
         {
-            offsetCamera = new Vector3(lanes[activeLane].position.x - 3.50f, transform.position.y, transform.position.z);
+            camMov.offset = 3.50f;
         }
-        transform.position = Vector3.MoveTowards(transform.position, offsetCamera, stepPlayer);
     }
 }

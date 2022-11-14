@@ -6,30 +6,49 @@ public class GameSettings : MonoBehaviour
 {
     public int difficulty;
 
-    public void SetEasy()
+    public bool hintsON;
+
+    public float musicVolume;
+    public float soundVolume;
+
+    public int resWidth;
+    public int resHeight;
+
+
+    void Start()
     {
-        difficulty = 1;
+        if (!PlayerPrefs.HasKey("difficulty"))
+        {
+            PlayerPrefs.SetInt("difficulty", 0);
+            difficulty = PlayerPrefs.GetInt("difficulty");
+        }
+        else
+        {
+            difficulty = PlayerPrefs.GetInt("difficulty");
+
+        }
     }
 
-    public void SetMedium()
+    private void Update()
     {
-        difficulty = 2;
+        
     }
 
-    public void SetHard()
+    public void SetDifficulty(int difficultyValue)
     {
-        difficulty = 3;
+        difficulty = difficultyValue;
+     
     }
 
     public int GetBaseSpeed()
     {
-        if (difficulty == 1)
+        if (difficulty == 0)
         {
             return 10; //easy
         }
         else
         {
-            if (difficulty == 2)
+            if (difficulty == 1)
             {
                 return 15;//medium
             }
@@ -42,13 +61,13 @@ public class GameSettings : MonoBehaviour
 
     public int GetRunSpeed()
     {
-        if (difficulty == 1)
+        if (difficulty == 0)
         {
             return 15;//easy
         }
         else
         {
-            if (difficulty == 2)
+            if (difficulty == 1)
             {
                 return 20;//medium
             }
@@ -58,4 +77,6 @@ public class GameSettings : MonoBehaviour
             }
         }
     }
+
+
 }

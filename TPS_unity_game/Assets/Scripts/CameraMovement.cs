@@ -10,22 +10,35 @@ public class CameraMovement : MonoBehaviour
     public Transform FrontCameraPlace;
     public Transform BackCameraPlace;
     public float speed;
+    public float multiplier;
 
     public float lineScaleX;
     public float lineScaleY;
     public float frequency;
 
     public bool runON;
-    
+    Vector3 BackCameraPosition;
+    Vector3 FrontCameraPosition;
+    public float offset;
+    public float backFrontMultiplier;
+    public float activeLaneMultiplier;
     void Start()
     {
         backCamera = true;
         runON = false;
+        offset = 0;
+        multiplier = backFrontMultiplier;
     }
 
     // Update is called once per frame
     void Update()
     {
+        BackCameraPosition = BackCameraPlace.position;
+        BackCameraPosition.x += offset;
+
+        FrontCameraPosition = FrontCameraPlace.position;
+        FrontCameraPosition.x += offset;
+
         var step = speed * Time.deltaTime;
         if (runON)
         {
@@ -37,13 +50,13 @@ public class CameraMovement : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
-                    mainCamera.transform.position = new Vector3(BackCameraPlace.position.x + x, BackCameraPlace.position.y + y, BackCameraPlace.position.z);
+                    mainCamera.transform.position = new Vector3(BackCameraPosition.x + x, BackCameraPosition.y + y, BackCameraPosition.z);
                     mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, BackCameraPlace.rotation, step);
                     mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 70, speed * Time.deltaTime);
                 }
                 else
                 {
-                    mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, BackCameraPlace.position, step * 18);
+                    mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, BackCameraPosition, step * multiplier);
                     mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, BackCameraPlace.rotation, step);
                     mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 55, speed * Time.deltaTime);
                 }
@@ -53,13 +66,13 @@ public class CameraMovement : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
-                    mainCamera.transform.position = new Vector3(FrontCameraPlace.position.x + x, FrontCameraPlace.position.y + y, FrontCameraPlace.position.z);
+                    mainCamera.transform.position = new Vector3(FrontCameraPosition.x + x, FrontCameraPosition.y + y, FrontCameraPosition.z);
                     mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, FrontCameraPlace.localRotation, step);
                     mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 60, speed * Time.deltaTime);
                 }
                 else
                 {
-                    mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, FrontCameraPlace.localPosition, step * 18);
+                    mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, FrontCameraPosition, step * multiplier);
                     mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, FrontCameraPlace.localRotation, step);
                     mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 55, speed * Time.deltaTime);
                 }
@@ -68,6 +81,7 @@ public class CameraMovement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C))
             {
                 backCamera = !backCamera;
+                multiplier = backFrontMultiplier;
             }
 
         } 
@@ -77,5 +91,10 @@ public class CameraMovement : MonoBehaviour
     public void RunChangeStatus()
     {
         runON = !runON;
+    }
+
+    public void MultiplierActiveLane()
+    {
+        multiplier = activeLaneMultiplier;
     }
 }
