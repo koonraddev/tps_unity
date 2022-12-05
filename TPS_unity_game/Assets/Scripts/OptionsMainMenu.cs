@@ -7,16 +7,22 @@ using UnityEngine.UI;
 public class OptionsMainMenu : MonoBehaviour
 {
 
-    
 
-    public GameObject player;
+
+    public GameObject gameController;
     private GameSettings gameSets;
 
     public GameObject diffObj;
     private TMP_Dropdown diffDropDown;
+    
+    public GameObject dayTimeObj;
+    private TMP_Dropdown dayTimeDropDown;
 
     public GameObject hintsObj;
     private Toggle hintsToggle;
+
+    public GameObject fullscreenObj;
+    private Toggle fullscreenToggle;
 
     public GameObject musicObj;
     private Slider musicSlider;
@@ -27,123 +33,137 @@ public class OptionsMainMenu : MonoBehaviour
     public GameObject ressObj;
     private TMP_Dropdown ressDropDown;
 
+    public GameObject sun;
+    private DayTimeScript sunScript;
+
+    public GameObject uiManagerObject;
+    private UIManager managerUI;
+
     void Start()
     {
-        gameSets = player.GetComponent<GameSettings>();
+        gameSets = gameController.GetComponent<GameSettings>();
         diffDropDown = diffObj.GetComponent<TMP_Dropdown>();
         hintsToggle = hintsObj.GetComponent<Toggle>();
+        fullscreenToggle = fullscreenObj.GetComponent<Toggle>();
         musicSlider = musicObj.GetComponent<Slider>();
         soundSlider = soundObj.GetComponent<Slider>();
         ressDropDown = ressObj.GetComponent<TMP_Dropdown>();
-
+        dayTimeDropDown = dayTimeObj.GetComponent<TMP_Dropdown>();
+        sunScript = sun.GetComponent<DayTimeScript>();
+        managerUI = uiManagerObject.GetComponent<UIManager>();
 
         GetHints();
+        GetFullscreen();
         GetDifficulty();
         GetGameResolution();
         GetMusic();
         GetSound();
-
+        GetDayTime();
     }
 
     public void OnApplyButtonClick()
     {
         var actualHintsON = hintsToggle.isOn;
+        var actualFullscreenON = fullscreenToggle.isOn;
         var actualDiffLevel = diffDropDown.value;
         var actualMusicVolume = musicSlider.value;
         var actualSoundVolume = soundSlider.value;
         var actualResolution = ressDropDown.value;
+        var actualDayTime = dayTimeDropDown.value;
 
-        
+
         SetHints(actualHintsON);
-        SetDifficulty(actualDiffLevel);   
+        SetFullscreen(actualFullscreenON);
+        SetDifficulty(actualDiffLevel);
+        SetGameResolution(actualResolution);
         SetMusic(actualMusicVolume);
         SetSound(actualSoundVolume);
-        SetGameResolution(actualResolution);
+        SetDayTime(actualDayTime);
     }
 
 
 
     public void GetHints()
     {
-        if (!PlayerPrefs.HasKey("hintsON"))
+        int turnHintsON = PlayerPrefs.GetInt("hintsON");
+        if (turnHintsON == 1)
         {
-            var actualHintsON = hintsToggle.isOn;
-            SetHints(actualHintsON);
+            hintsToggle.isOn = true;
         }
         else
         {
-            int turnHintsON = PlayerPrefs.GetInt("hintsON");
-            if (turnHintsON == 1)
-            {
-                hintsToggle.isOn = true;
-            }
-            else
-            {
-                hintsToggle.isOn = false;
-            }
+            hintsToggle.isOn = false;
         }
     }
 
     void SetHints(bool hintsON)
     {
-        //gameSets.SetHints(hintsON);
         if (hintsON)
         {
             PlayerPrefs.SetInt("hintsON", 1);
+            gameSets.SetHints(1);
+            managerUI.ChangeHintsStatus();
         }
         else
         {
             PlayerPrefs.SetInt("hintsON", 0);
+            gameSets.SetHints(0);
+            managerUI.ChangeHintsStatus();
         }
     }
 
-    public void GetDifficulty()
+
+    public void GetFullscreen()
     {
-        int actualDifficultyLevel;
-        if (!PlayerPrefs.HasKey("difficulty"))
+        int goFullscreen = PlayerPrefs.GetInt("fullscreen");
+        if (goFullscreen == 1)
         {
-            actualDifficultyLevel = diffDropDown.value;
-            SetDifficulty(actualDifficultyLevel);
+            fullscreenToggle.isOn = true;
         }
         else
         {
-            actualDifficultyLevel = PlayerPrefs.GetInt("difficulty");
-            diffDropDown.value = actualDifficultyLevel;
+            fullscreenToggle.isOn = false;
         }
+    }
+
+    public void SetFullscreen(bool fullscreenON)
+    {
+        if (fullscreenON)
+        {
+            PlayerPrefs.SetInt("fullscreen", 1);
+            gameSets.SetFullscreen(1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("fullscreen", 0);
+            gameSets.SetFullscreen(0);
+        }
+    }
+    public void GetDifficulty()
+    {
+        diffDropDown.value = PlayerPrefs.GetInt("difficulty");
     }
 
     void SetDifficulty(int diffLevel)
     {
-        //gameSets.SetDifficulty(diffLevel);
         PlayerPrefs.SetInt("difficulty", diffLevel);
-
+        gameSets.SetDifficulty(diffLevel);
     }
 
     public void GetGameResolution()
     {
-        int actualResIndex;
-        int actualResWidhtValue;
-        if (!PlayerPrefs.HasKey("resolutionWidth") || !PlayerPrefs.HasKey("resolutionHeight"))
+        int actualResHeightValue;
+
+        actualResHeightValue = PlayerPrefs.GetInt("resolutionHeight");
+
+        Dictionary<int, int> resHeightIndex = new()
         {
-            actualResIndex = ressDropDown.value;
-            SetGameResolution(actualResIndex);
-        }
-        else
-        {
-            actualResWidhtValue = PlayerPrefs.GetInt("resolutionWidth");
-
-            Dictionary<int, int> resHeightIndex = new Dictionary<int, int>()
-            {
-                {720, 1280 },
-                {900, 1600 },
-                {1080, 1920 },
-                {1440, 2560 }
-            };
-
-            ressDropDown.value = resHeightIndex[actualResWidhtValue];
-
-
-        }
+            {720, 0 },
+            {900, 1 },
+            {1080, 2 },
+            {1440, 3 }
+        };
+        ressDropDown.value = resHeightIndex[actualResHeightValue];
     }
 
     public void SetGameResolution(int resIndex)
@@ -167,48 +187,50 @@ public class OptionsMainMenu : MonoBehaviour
 
         PlayerPrefs.SetInt("resolutionWidht", resW[resIndex]);
         PlayerPrefs.SetInt("resolutionHeight", resH[resIndex]);
-        //Display.main.SetRenderingResolution(resWidht, resHeight);
+        gameSets.SetApplyResolution(resH[resIndex], resW[resIndex]);
     }
 
     public void GetMusic()
     {
-        float actualMusicValue;
-        if (!PlayerPrefs.HasKey("musicVolume"))
-        {
-            actualMusicValue = musicSlider.value * 0.05f;
-            SetMusic(actualMusicValue);
-        }
-        else
-        {
-            actualMusicValue = PlayerPrefs.GetFloat("musicVolume");
-            musicSlider.value = (int)Mathf.Floor(actualMusicValue * 20);
-        }
+        musicSlider.value = PlayerPrefs.GetFloat("musicVolume");
+
     }
     public void SetMusic(float musicVolume)
     {
-        //gameSets.SetMusicVolume(musicVolume*0.05f);
         PlayerPrefs.SetFloat("musicVolume", musicVolume);
+
+        //gameSets.SetMusicVolume(musicVolume*0.05f); <---------do zrobienia
+    }
+    public void GetDayTime()
+    {
+        dayTimeDropDown.value = PlayerPrefs.GetInt("dayTime");
+    }
+
+    public void SetDayTime(int dayTime)
+    {
+        PlayerPrefs.SetInt("dayTime", dayTime);
+        if (dayTime == 2 || dayTime == 3)
+        {
+            PlayerPrefs.SetInt("lightsON", 1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("lightsON", 0);
+        }
+
+        gameSets.SetDayTime(dayTime);
+        sunScript.SetSunPosition();
     }
 
     public void GetSound()
     {
-        float actualSoundValue;
-        if (!PlayerPrefs.HasKey("soundVolume"))
-        {
-            actualSoundValue = soundSlider.value * 0.05f;
-            SetSound(actualSoundValue);
-        }
-        else
-        {
-            actualSoundValue = PlayerPrefs.GetFloat("soundVolume");
-            soundSlider.value = (int)Mathf.Floor(actualSoundValue * 20);
-        }
+        soundSlider.value = PlayerPrefs.GetFloat("soundVolume");
     }
 
     public void SetSound(float soundVolume)
     {
-        //gameSets.SetSoundVolume(soundVolume*0.05f);
         PlayerPrefs.SetFloat("soundVolume", soundVolume);
+        //gameSets.SetSoundVolume(soundVolume*0.05f); <----------do zrobienia
     }
 
 

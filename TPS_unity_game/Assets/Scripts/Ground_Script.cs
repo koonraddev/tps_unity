@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Ground_Script : MonoBehaviour
 {
-    public GameObject player;
     private GameSettings gameSettings;
 
 
@@ -61,5 +60,15 @@ public class Ground_Script : MonoBehaviour
     {
         baseSpeed = gameSettings.GetBaseSpeed();
         runSpeed = gameSettings.GetRunSpeed();
+    }
+
+    public float GetBaseSpeed()
+    {
+        return baseSpeed;
+    }
+
+    public float GetRunSpeed()
+    {
+        return runSpeed;
     }
 }
