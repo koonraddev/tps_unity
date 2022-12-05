@@ -7,14 +7,18 @@ TagManager:
   - Plane
   - MainWay
   - Obstacle
+  - PlayerCharacter
+  - StrongObstacle
+  - fog
+  - KillingTrigger
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Cargo
   - Water
   - UI
-  - 
+  - Fog
   - 
   - 
   - 
