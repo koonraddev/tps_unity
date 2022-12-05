@@ -27,23 +27,33 @@ public class TriggerScript : MonoBehaviour
     }
     private void OnTriggerExit(Collider exitInfo)
     {
-        Debug.Log("jest collider");
+        if (biome == 1)
+        {
+            currentPrefabsList = industryPrefabsList;
+        }
+        if (biome == 2)
+        {
+            currentPrefabsList = poolPrefabsList;
+        }
         Ground_Script ground = exitInfo.GetComponent<Ground_Script>();
         if (ground != null)
         {
-            Debug.Log("jest skrypt");
+            //Debug.Log("jest skrypt");
             try
             {
                 string prefabName = exitInfo.gameObject.name;
-                Debug.Log(prefabName);
-                if (prefabName.Substring(prefabName.Length - 7, 7) == "(Clone)")
+                if (prefabName.Length > 7)
                 {
-                    lastPrefabNumber = System.Int32.Parse(prefabName.Substring(prefabName.Length - 8, 1));
+                    if (prefabName.Substring(prefabName.Length - 7, 7) == "(Clone)")
+                    {
+                        lastPrefabNumber = System.Int32.Parse(prefabName.Substring(prefabName.Length - 8, 1));
+                    }
+                    else
+                    {
+                        lastPrefabNumber = System.Int32.Parse(prefabName.Substring(prefabName.Length - 1, 1));
+                    }
                 }
-                else
-                {
-                    lastPrefabNumber = System.Int32.Parse(prefabName.Substring(prefabName.Length - 1, 1));
-                }
+                
                 newPrefabNumber = randomIntExcept(lastPrefabNumber);
             }
             catch (System.FormatException)
