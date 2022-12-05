@@ -4,18 +4,43 @@ using UnityEngine;
 
 public class RenderingTriggerRightScript : MonoBehaviour
 {
-    public List<GameObject> rightPrefabsList;
+    public List<GameObject> industryPrefabsList;
+    public List<GameObject> poolPrefabsList;
+    public List<GameObject> currentPrefabsList;
 
     private int newPrefabNumber;
     private int lastPrefabNumber;
+
+    public int biome;
+
+    void Start()
+    {
+        if (biome == 1)
+        {
+            currentPrefabsList = industryPrefabsList;
+        }
+        if (biome == 2)
+        {
+            currentPrefabsList = poolPrefabsList;
+        }
+
+    }
     private void OnTriggerExit(Collider exitInfo)
     {
+        if (biome == 1)
+        {
+            currentPrefabsList = industryPrefabsList;
+        }
+        if (biome == 2)
+        {
+            currentPrefabsList = poolPrefabsList;
+        }
         Ground_Script ground = exitInfo.GetComponent<Ground_Script>();
         if (ground != null)
         {
+            //Debug.Log("jest skrypt");
             try
             {
-
                 string prefabName = exitInfo.gameObject.name;
                 if (prefabName.Substring(prefabName.Length - 7, 7) == "(Clone)")
                 {
@@ -25,7 +50,6 @@ public class RenderingTriggerRightScript : MonoBehaviour
                 {
                     lastPrefabNumber = System.Int32.Parse(prefabName.Substring(prefabName.Length - 1, 1));
                 }
-
                 newPrefabNumber = randomIntExcept(lastPrefabNumber);
             }
             catch (System.FormatException)
@@ -42,16 +66,17 @@ public class RenderingTriggerRightScript : MonoBehaviour
 
     }
 
+
     public int randomIntExcept(int except)
     {
-        int result = Random.Range(0, rightPrefabsList.Count - 1);
+        int result = Random.Range(0, currentPrefabsList.Count - 1);
         if (result >= except) result += 1;
         return result;
     }
 
     private void RenderGround(int prefabNumber)
     {
-        Vector3 pos1 = gameObject.transform.position + (new Vector3(0f, 0.5f, rightPrefabsList[prefabNumber].transform.localScale.z - gameObject.transform.localScale.z - 1f));
-        Instantiate(rightPrefabsList[prefabNumber], pos1, Quaternion.identity);
+        Vector3 pos1 = gameObject.transform.position + (new Vector3(0f, 0f, (currentPrefabsList[prefabNumber].transform.localScale.z - gameObject.transform.localScale.z - 1f)));
+        Instantiate(currentPrefabsList[prefabNumber], pos1, Quaternion.identity);
     }
 }

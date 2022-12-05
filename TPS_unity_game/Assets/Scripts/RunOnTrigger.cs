@@ -11,12 +11,19 @@ public class RunOnTrigger : MonoBehaviour
     public GameObject player;
     private PlayerMovement playerMov;
 
+    public GameObject uiManagerObject;
+    private UIManager uiManager;
+
+    public GameObject distanceCounter;
+
+    private int objectNumber;
     void Start()
     {
         camMov = mainCamera.GetComponent<CameraMovement>();
         camStartMov = mainCamera.GetComponent<CameraStartMenu>();
         playerMov = player.GetComponent<PlayerMovement>();
-       
+        uiManager = uiManagerObject.GetComponent<UIManager>();
+        objectNumber = PlayerPrefs.GetInt("numberObject");
     }
 
     private void OnTriggerEnter(Collider enterInfo)
@@ -27,7 +34,10 @@ public class RunOnTrigger : MonoBehaviour
             camMov.RunChangeStatus();
             camStartMov.RunChangeStatus();
             playerMov.RunChangeStatus();
-
+            uiManager.RunChangeStatus();
+            distanceCounter.SetActive(true);
+            objectNumber += 1;
+            PlayerPrefs.SetInt("numberObject", objectNumber);
         }
     }
 }

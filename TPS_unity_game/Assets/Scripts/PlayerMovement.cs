@@ -83,12 +83,9 @@ public class PlayerMovement : MonoBehaviour
                 }
 
             }
-
-            movHorizontal = Input.GetAxisRaw("Horizontal");
             activeLane = Mathf.Clamp(activeLane, 0, 4);
         }
             
-        movVect = new Vector3(movHorizontal, 0f, 0f);
 
         if (ctr.isGrounded)
         {
@@ -114,6 +111,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 moveVector = Vector3.zero;
         moveVector.x = (newPosition - transform.position).normalized.x * movementSpeed;
         moveVector.y = verticalVelocity;
+        
         if (transform.position.z != lanes[activeLane].transform.position.z)
         {
             moveVector.z = (newPosition - transform.position).normalized.z * movementSpeed;
@@ -127,14 +125,14 @@ public class PlayerMovement : MonoBehaviour
 
         
     }
-
-    public void Jump()
-    {
-        
-    }
     public int GetActiveLane()
     {
         return activeLane;
+    }
+
+    public Vector3 GetActiveLanePosition()
+    {
+        return lanes[activeLane].transform.position;
     }
 
     public float GetMovementSpeed()
@@ -144,5 +142,20 @@ public class PlayerMovement : MonoBehaviour
     public void RunChangeStatus()
     {
         runON = !runON;
+    }
+    public void MoveLeft()
+    {
+        if (runON)
+        {
+            activeLane -= 1;
+        }
+    }
+
+    public void MoveRight()
+    {
+        if (runON)
+        {
+            activeLane += 1;
+        }
     }
 }

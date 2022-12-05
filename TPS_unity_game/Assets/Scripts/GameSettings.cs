@@ -2,31 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class GameSettings : MonoBehaviour
 {
-    public int difficulty;
+    private int difficulty;
 
-    public bool hintsON;
+    private int hintsON; //1 - on; 0 - off
+    private int fullscreenON; //1 - on; 0 - off
 
-    public float musicVolume;
-    public float soundVolume;
+    private float musicVolume;
+    private float soundVolume;
+    private int resWidth;
+    private int resHeight;
 
-    public int resWidth;
-    public int resHeight;
+    private int dayTime;
+    private
 
 
     void Start()
     {
-        if (!PlayerPrefs.HasKey("difficulty"))
-        {
-            PlayerPrefs.SetInt("difficulty", 0);
-            difficulty = PlayerPrefs.GetInt("difficulty");
-        }
-        else
-        {
-            difficulty = PlayerPrefs.GetInt("difficulty");
-
-        }
+        difficulty = PlayerPrefs.GetInt("difficulty");
+        hintsON = PlayerPrefs.GetInt("hintsON");
+        fullscreenON = PlayerPrefs.GetInt("fullscreen");
+        musicVolume = PlayerPrefs.GetFloat("musicVolume");
+        soundVolume = PlayerPrefs.GetFloat("soundVolume");
+        resWidth = PlayerPrefs.GetInt("resolutionWidth");
+        resHeight = PlayerPrefs.GetInt("resolutionHeight");
+        dayTime = PlayerPrefs.GetInt("dayTime");
     }
 
     private void Update()
@@ -37,9 +39,12 @@ public class GameSettings : MonoBehaviour
     public void SetDifficulty(int difficultyValue)
     {
         difficulty = difficultyValue;
-     
     }
 
+    public int GetDifficulty()
+    {
+        return difficulty;
+    }
     public int GetBaseSpeed()
     {
         if (difficulty == 0)
@@ -78,5 +83,42 @@ public class GameSettings : MonoBehaviour
         }
     }
 
+    public void SetHints(int hintsINT)
+    {
+        hintsON = hintsINT;
+    }
 
+    public int GetHints()
+    {
+        return hintsON;
+    }
+
+    public void SetFullscreen(int fullON)
+    {
+        fullscreenON = fullON;
+    }
+    public void SetApplyResolution(int resH, int resW)
+    {
+        resHeight = resH;
+        resWidth = resW;
+        if (fullscreenON == 1)
+        {
+            Screen.SetResolution(resW, resH, true);
+        }
+        else
+        {
+            Screen.SetResolution(resW, resH, false);
+        }
+
+    }
+
+    
+    public void SetDayTime(int dayTimeValue)
+    {
+        dayTime = dayTimeValue;
+    }
+    public int GetDayTime()
+    {
+        return dayTime;
+    }
 }
