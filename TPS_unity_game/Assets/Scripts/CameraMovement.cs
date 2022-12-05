@@ -9,35 +9,57 @@ public class CameraMovement : MonoBehaviour
 
     public Transform FrontCameraPlace;
     public Transform BackCameraPlace;
+
+    public Vector3 BackCameraStartPlace;
     public float speed;
     public float multiplier;
 
+    [Header("Floating Effect")]
     public float lineScaleX;
     public float lineScaleY;
     public float frequency;
 
+    [Header("FOV Settings")]
+    public float Shifting;
+    public float NOShifting;
+    [Space(10)]
+    public float ShiftingFrontCam;
+    public float NOShiftingFrontCam;
+    [Space(10)]
+
     public bool runON;
     Vector3 BackCameraPosition;
     Vector3 FrontCameraPosition;
-    public float offset;
+    public float offsetX;
+    public float offsetY;
     public float backFrontMultiplier;
     public float activeLaneMultiplier;
+
+    public int cameraMode; //0 = standard/top run  |  1 = bottom run
     void Start()
     {
         backCamera = true;
         runON = false;
-        offset = 0;
+        offsetX = 0;
+        offsetY = 0;
         multiplier = backFrontMultiplier;
+        cameraMode = 1;
+        BackCameraStartPlace = BackCameraPosition;
     }
 
     // Update is called once per frame
     void Update()
     {
-        BackCameraPosition = BackCameraPlace.position;
-        BackCameraPosition.x += offset;
-
+        BackCameraPosition = BackCameraStartPlace;
         FrontCameraPosition = FrontCameraPlace.position;
-        FrontCameraPosition.x += offset;
+        if (cameraMode == 1)
+        {
+            BackCameraPosition.x += offsetX;
+            FrontCameraPosition.x += offsetX;
+            
+            FrontCameraPosition.y += offsetY;
+            BackCameraPosition.y += offsetY;
+        }
 
         var step = speed * Time.deltaTime;
         if (runON)
@@ -50,15 +72,17 @@ public class CameraMovement : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
-                    mainCamera.transform.position = new Vector3(BackCameraPosition.x + x, BackCameraPosition.y + y, BackCameraPosition.z);
+                    //mainCamera.transform.position = new Vector3(BackCameraPosition.x + x, BackCameraPosition.y + y, BackCameraPosition.z);
+                    //mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, BackCameraPosition, step * multiplier);
+                    mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, new Vector3(BackCameraPosition.x + x, BackCameraPosition.y + y, BackCameraPosition.z), step * multiplier);
                     mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, BackCameraPlace.rotation, step);
-                    mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 70, speed * Time.deltaTime);
+                    mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, Shifting, speed * Time.deltaTime);
                 }
                 else
                 {
                     mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, BackCameraPosition, step * multiplier);
                     mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, BackCameraPlace.rotation, step);
-                    mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 55, speed * Time.deltaTime);
+                    mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, NOShifting, speed * Time.deltaTime);
                 }
 
             }
@@ -66,15 +90,15 @@ public class CameraMovement : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
-                    mainCamera.transform.position = new Vector3(FrontCameraPosition.x + x, FrontCameraPosition.y + y, FrontCameraPosition.z);
+                    mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, new Vector3(FrontCameraPosition.x + x, FrontCameraPosition.y + y, FrontCameraPosition.z), step * multiplier);
                     mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, FrontCameraPlace.localRotation, step);
-                    mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 60, speed * Time.deltaTime);
+                    mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, ShiftingFrontCam, speed * Time.deltaTime);
                 }
                 else
                 {
                     mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, FrontCameraPosition, step * multiplier);
                     mainCamera.transform.rotation = Quaternion.Slerp(mainCamera.transform.rotation, FrontCameraPlace.localRotation, step);
-                    mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 55, speed * Time.deltaTime);
+                    mainCamera.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, NOShifting, speed * Time.deltaTime);
                 }
             }
 

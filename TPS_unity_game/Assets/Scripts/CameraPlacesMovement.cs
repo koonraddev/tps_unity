@@ -23,6 +23,11 @@ public class CameraPlacesMovement : MonoBehaviour
     public float stepPlayer;
     public GameObject playerObject;
     private PlayerMovement playerMov;
+
+
+    private float playerPosY;
+    private float playerPosX;
+
     void Start()
     {
         camMov = mainCamera.GetComponent<CameraMovement>();
@@ -44,25 +49,27 @@ public class CameraPlacesMovement : MonoBehaviour
         backCamera = camMov.backCamera;
         activeLane = playerMov.GetActiveLane();
 
-        if (activeLane == 0)
+        playerPosY = playerObject.transform.position.y;
+        playerPosX = playerObject.transform.position.x;
+        GetOffset();
+        
+    }
+
+    public void GetOffset()
+    {
+        /*
+        camMov.offsetX = activeLane switch
         {
-            camMov.offset = -3.50f;
-        }
-        if (activeLane == 1)
-        {
-            camMov.offset = -1.75f;
-        }
-        if (activeLane == 2)
-        {
-            camMov.offset = 0f;
-        }
-        if (activeLane == 3)
-        {
-           camMov.offset = 1.75f;
-        }
-        if (activeLane == 4)
-        {
-            camMov.offset = 3.50f;
-        }
+            0 => -3.50f,
+            1 => -1.75f,
+            2 => 0f,
+            3 => 1.75f,
+            4 => 3.50f,
+            _ => 0f,
+        };
+        */
+
+        camMov.offsetX = playerPosX;
+        camMov.offsetY = playerPosY;
     }
 }
